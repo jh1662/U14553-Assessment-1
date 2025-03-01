@@ -1,0 +1,6 @@
+Date: 2025-03-01 18:51:58 | command: Exited program 
+Date: 2025-03-01 18:53:15 | command: Listed directory - ./ 
+Date: 2025-03-01 18:54:54 | command: Listed directory - /c/Users/Emperor Haddad/U14553 - Assessment 1/U14553-Assessment-1 
+Date: 2025-03-01 19:03:30 | command: Listed directory - /c/Users/Emperor Haddad/U14553 - Assessment 1/U14553-Assessment-1 
+Date: 2025-03-01 19:11:37 | command: Listed directory - /c/Users/Emperor Haddad/U14553 - Assessment 1/U14553-Assessment-1 
+Date: 2025-03-01 19:37:25 | command: Deleted file -  
