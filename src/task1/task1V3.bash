@@ -31,9 +31,9 @@ displayMenu(){
     #* Executes on start and when command 'help' is used.
     #* Function purposely not called 'help' to not call the bash in-built function instead.
     #: Easier to use multiple echo commands than printf for this ASCII menu display.
-    echo "===================================================================================="
+    echo "===================================================================================================="
     echo "Intelligent File Manager - Main Menu"
-    echo "===================================================================================="
+    echo "===================================================================================================="
     echo "> list [directory path] - List all files in a directory"
     echo "> move [file path] [directory path]- Move a file to a different folder"
     echo "> rename [file path] [new name] - Rename a file"
@@ -41,7 +41,7 @@ displayMenu(){
     echo "> backup [file path] - manually backup a file"
     echo "> exit - exit the program"
     echo "> help - View the main menu"
-    echo "===================================================================================="
+    echo "===================================================================================================="
 
 }
 list(){
@@ -52,8 +52,8 @@ list(){
 
     printf "Permissions\tLinks\tOwner\t\tGroup\t\tSize\tLast Modified\t\tName\n";
     #^ '\t' means tab - to allow spacing between toe column labels
-    echo "===================================================================================="
-    ls -lht "$dirPath" | grep -v "^total" | awk '{printf "%-12s\t%-5s\t%-15s\t%-15s\t%-8s\t%-20s\t%s\n", $1, $2, $3, $4, $5, $6 " " $7 " " $8, $9}'
+    echo "===================================================================================================="
+    ls -lht "$dirPath" | grep -v "^total" | awk '{printf "%-12s\t%-5s\t%-15s\t%-15s\t%-4s\t%-20s\t%s\n", $1, $2, $3, $4, $5, $6 " " $7 " " $8, $9}'
     #^ Takes the result 'ls -lht "$dirPath"' and pipe the result into the grep command and then into awk command.
     #^ For 'ls', the following arguments: 'l' - provide extra details, 'h' - prints storage sizes in human-readable format, and '-t' sort rows by latest modification timestamps.
     #^ Numbers after '%-' (and before 's') means the number of characters they occupy (regardless of string being under or over that count).
@@ -157,7 +157,10 @@ backupLog(){
     #^ File name convension is different to usual because it was specified in assaignment.
 }
 backupFile(){
-    filePath="$1";
+    fileName=$(basename "$1");
+    #^ More compact, yet still simple, to directly get filename from argument rather than assigning argument to a varible first.
+    #^ Far simplier, than manually finding where slice and slice the string file path thanks to 
+
 }
 #endregion
-menu;
+menu;98

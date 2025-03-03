@@ -4,3 +4,10 @@ Date: 2025-03-01 18:54:54 | command: Listed directory - /c/Users/Emperor Haddad/
 Date: 2025-03-01 19:03:30 | command: Listed directory - /c/Users/Emperor Haddad/U14553 - Assessment 1/U14553-Assessment-1 
 Date: 2025-03-01 19:11:37 | command: Listed directory - /c/Users/Emperor Haddad/U14553 - Assessment 1/U14553-Assessment-1 
 Date: 2025-03-01 19:37:25 | command: Deleted file -  
+Date: 2025-03-03 10:24:25 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-03 10:25:34 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-03 10:25:58 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-03 10:26:23 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-03 11:32:18 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-03 11:33:46 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-03 11:34:12 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
