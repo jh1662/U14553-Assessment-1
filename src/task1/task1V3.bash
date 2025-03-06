@@ -65,12 +65,15 @@ list(){
     printf "Permissions\tLinks\tOwner\t\tGroup\t\tSize\tLast Modified\t\tName\n";
     #^ '\t' means tab - to allow spacing between toe column labels
     echo "===================================================================================================="
-    ls -lht "$dirPath" | grep -v "^total" | awk '{printf "%-12s\t%-5s\t%-15s\t%-15s\t%-4s\t%-20s\t%s\n", $1, $2, $3, $4, $5, $6 " " $7 " " $8, $9}';
+    ls -lht "$dirPath" | grep -v "^total" | while read -r permissions links owner group size date time name; do
+        printf "%-12s\t%-5s\t%-15s\t%-15s\t%-4s\t%-20s\t%s\n" "$permissions" "$links" "$owner" "$group" "$size" "$date $time" "$name"
+    done
     #^ Takes the result 'ls -lht "$dirPath"' and pipe the result into the grep command and then into awk command.
     #^ For 'ls', the following arguments: 'l' - provide extra details, 'h' - prints storage sizes in human-readable format, and '-t' sort rows by latest modification timestamps.
     #^ Numbers after '%-' (and before 's') means the number of characters they occupy (regardless of string being under or over that count).
     #^ For example: '%-12s' mean that string must occuppy 12 charaters.
     #^ This allows the columns to alaign with the tab seperated headings.
+    #^ Not allowed to use the 'awk' command so will use a while-loop instead.
 
     backupLog "Listed directory - $(realpath "$dirPath")";
     #^ log command to 'backup_log.txt' with the absolute directory path instead of relative one.
@@ -89,7 +92,7 @@ delete(){
         #^ Notify user of success.
         if [ ! "$(realpath "$(dirname "$filePath")")" == "$(realpath "./backup/")" ]; then
             #^ All in same line to save space and also because is not needed again in function afterwards.
-            #^ Comparing as absolute paths incase user uses absolute path to delete 
+            #^ Comparing as absolute paths incase user uses absolute path to delete
             backupLog "Deleted file - $(realpath "$filePath")";
         fi
     fi
@@ -157,6 +160,7 @@ validation(){
     #* Checks if path exist and if it leads to a file or directory.
     local path=$1;
     local isFile=$2;
+    //local isLoud=$3;
         echo "Checking path of: $(realpath "$path")";
         #^ 'realpath' feature informs user of the absolute version of the path incase they got confused with the relative path.
         if [ -e "$path" ]; then
@@ -218,10 +222,10 @@ backupFile(){
     #^ Argument '-s' only fetched the total size of the directory.
     #^ Argument '-m' shows size in MB.
     #^ Not using '-h' because value will be compared against.
-    #^ 'cut' command fetches the first column ('-f1') of the result - displaying "[size]MB" instead of "[size]MB ./backupDir". 
+    #^ 'cut' command fetches the first column ('-f1') of the result - displaying "[size]MB" instead of "[size]MB ./backupDir".
     #^ 'du' command source - https://www.tutorialspoint.com/unix_commands/du.htm
     #^ 'cut' command source - https://www.tutorialspoint.com/unix_commands/cut.htm
-    if [ "$totalSize" -gt 500 ]; then 
+    if [ "$totalSize" -gt 500 ]; then
         #^ '-gt' argument is same as greater than ('>').
         echo "Warning - contents of backup directory exceeds 500 MB (currently $totalSize MB). Concider deleting some files.";
     fi
