@@ -212,7 +212,7 @@ backupFile(){
     #* No need to validate paths here because they will be already be validated by caller function.
     filePath="$1";
     #^ To know which file to make a back up of.
-    fileName=$(basename "$filePath - $(date +"%Y-%m-%d-%H:%M:%S")");
+    fileName=$(basename "$filePath - $(date +"%Y-%m-%d-%H-%M-%S")");
     #^ More compact, yet still simple.
     #^ Far simplier, than manually finding where slice and slice the string file path thanks to 'basename'.
     #^ Source: https://www.tutorialspoint.com/unix_commands/basename.htm .
