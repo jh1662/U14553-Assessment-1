@@ -57,7 +57,7 @@ displayMenu(){
 }
 list(){
     read -p "Please enter directory path" -r dirPath;
-    echo "RESULT $(! validation "$dirPath" 1)";
+    ##echo "RESULT $(! validation "$dirPath" 1)";
     if ! validation "$dirPath" 1; then return; fi
     #^ If validation fails, then exit function.
     #^ Does not work with square brackets ('[' and ']').
@@ -82,7 +82,7 @@ delete(){
     read -p "Please enter file path" -r filePath;
     if ! validation "$filePath" 0; then return; fi
     #^ Check if path exist and leads the a file.
-    if confirm "Are you sure you want to delete file at path: $filePath ?"; then
+    if confirm "Are you sure you want to delete file at path (Y/N): $filePath ?"; then
         #^ Ask for user's confirmation
         backupFile "$filePath";
         #^ automatically back file before deletion.
@@ -94,6 +94,7 @@ delete(){
             #^ All in same line to save space and also because is not needed again in function afterwards.
             #^ Comparing as absolute paths incase user uses absolute path to delete
             backupLog "Deleted file - $(realpath "$filePath")";
+            #^ Counter-intuitive to backup deleted back up, when user delete back up files it is to save space.
         fi
     fi
     echo "File deletion cancelled."
@@ -102,21 +103,28 @@ delete(){
 move(){
     read -p "Please enter file path to move" -r filePath;
     read -p "Please enter destination directory path to move to" -r dirPath;
-    if validatation "$filePath" 0 -o validate "$dirPath" 1; then return; fi
+    if validation "$filePath" 0 -o validation "$dirPath" 1; then return; fi
     #^ No need to return status code as it will not be needed by caller function.
+    #^ '-o' argument same as or operator ('||').
     mv "$filePath" "$dirPath";
     #^ The moving operation.
+    echo "File moved";
+    backupLog "Moved file '$filePath' to directory $(realpath "$dirPath")";
+    #^ Log moving operation with file name and destination directory.
 }
 rename(){
     #: Gather inputs.
     read -p "Please enter file path to rename" -r filePath;
     read -p "Please enter new name" -r newName;
 
-    if validatation "$(dirname "$filePath")/$newName;" 0 -o ; then return; fi
+    if validation "$(dirname "$filePath")/$newName;" 0; then return; fi
     #^ Cannot rename a non-existing file.
     mv -i "$filePath" "$(dirname "$filePath")/$newName";
     #^ Use the move command ('mv') to move to exact same director but with different name.
     #^ Not move's main purpose but works perfectly fine and is still good practice.
+    echo "File renamed";
+    backupLog "Renamed file '$filePath' to file '$newName' at $(dirname "$filePath")";
+    #^ Log rename operation with both old and new file names as well as the file's location.
 }
 confirmExit(){
     #* Executes when command 'exit' is used.
@@ -160,7 +168,7 @@ validation(){
     #* Checks if path exist and if it leads to a file or directory.
     local path=$1;
     local isFile=$2;
-    //local isLoud=$3;
+    #local isLoud=$3;
         echo "Checking path of: $(realpath "$path")";
         #^ 'realpath' feature informs user of the absolute version of the path incase they got confused with the relative path.
         if [ -e "$path" ]; then
@@ -173,7 +181,7 @@ validation(){
                     return 0;
                     #^ In bash, 'return 0' means returning true.
                 else
-                    printf "Error - path '%s' does not lead to a file (to a directory intead)" "$path";
+                    printf "Error - path '%s' does not lead to a file (to a directory intead)\n" "$path";
                     return 1;
                     #^ In bash, 'return 1' means returning true.
                 fi
@@ -183,13 +191,13 @@ validation(){
                     #^ Does path lead actually to a directory?
                     return 0;
                 else
-                    printf "Error - path '%s' does not lead to a directory (to a file intead)" "$path";
+                    printf "Error - path '%s' does not lead to a directory (to a file intead)\n" "$path";
                     return 1;
                 fi
             fi
         else
-            printf "Error - non-existant path - the path '%s' leads to a file instead of a directory" "$path";
-        return 0;
+            printf "Error - non-existant path - the path '%s' leads to a file instead of a directory\n" "$path";
+        return 1;
         fi
 }
 backupLog(){
@@ -211,13 +219,13 @@ backupFile(){
     #^ Checked and it is allowed to have colons in linux file names (ext[2-4]) - https://stackoverflow.com/questions/4814040/allowed-characters-in-filename .
     backupDir="./backup/";
     #^ Decalred to own variable because is referanced more than once.
-    if validation "$backupDir"; then mkdir "$backupDir"; fi
+    if ! validation "$backupDir"; then mkdir "$backupDir"; fi
     #^ Create back up directory if does not already exist.
     #^ Due to its simplicity, its compressed into a single line.
     cp -i "$filePath" "$backupDir$fileName";
     #^ 'cp' allows specifying new name whe copying file over - as mentioned in source: https://linuxize.com/post/cp-command-in-linux/ .
     #^ '-i' is for confimation if back up was to overwite another file but near impossible that will happen because of use of timestamps in the file name.
-    totalSize=$(du -sm "backupDir" | cut -f1)
+    totalSize=$(du -sm "backup" | cut -f1)
     #^ 'du' command stands for disk usage and shows infomation regarding sizes of subjected directory.
     #^ Argument '-s' only fetched the total size of the directory.
     #^ Argument '-m' shows size in MB.
