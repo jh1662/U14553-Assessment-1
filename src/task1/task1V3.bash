@@ -1,5 +1,16 @@
 #!/bin/bash
 #^ Shebang line tells to execute this file using the Bash shell.
+
+#x Function returns works differently to other languages.
+#x Opposite to others, in BASH, a returned 0 means success and a returned 1 is fail (contrasting the 1=true and 0=false).
+#x This is because BASH returns are for status codes rather then boolean.
+#x Source: https://labex.io/tutorials/shell-bash-function-return-values-391153#understanding-function-return-codes .
+#x This is important to know because if-statments will only return true if called function returns 0.
+
+#x Used ShellCheck (https://www.shellcheck.net/) to help enforce good BASH programming practice.
+
+#x Developer made sure to add semi-colon at the end of all appropiate lines a stricter but better programming practice.
+
 menu(){
     clear
     #^ Makes is easier for user be clearing everyting else in the current terminal.
@@ -9,14 +20,14 @@ menu(){
     #^ Display commands.
     while true; do
         read -p "Please enter a command ('help' for commands):" -r option;
-        #^ "-r" argument prevents backslashes ('\') from being interpreted as special characters such as new line ('\n') (SC2162).
+        #^ "-r" argument prevents backslashes ('\') from being interpreted as special characters such as new line ('\n') (SC2162 - https://www.shellcheck.net/wiki/SC2162).
         #^ "-p" argument displays text to terminal before waiting for user input - like 'echo' before but on the same line/
         case $option in
             "list") list ;;
-            "move") echo "move" ;;
-            "rename") echo "rename" ;;
+            "move") move ;;
+            "rename") rename ;;
             "delete") delete ;;
-            "backup") echo "backup" ;;
+            "backup") backup ;;
             "exit") confirmExit ;;
             "help") displayMenu ;;
             *) printf "Error - unknown command try again.\nType 'help' to view all script commands." ;;
@@ -46,6 +57,7 @@ displayMenu(){
 }
 list(){
     read -p "Please enter directory path" -r dirPath;
+    echo "RESULT $(! validation "$dirPath" 1)";
     if ! validation "$dirPath" 1; then return; fi
     #^ If validation fails, then exit function.
     #^ Does not work with square brackets ('[' and ']').
@@ -53,12 +65,13 @@ list(){
     printf "Permissions\tLinks\tOwner\t\tGroup\t\tSize\tLast Modified\t\tName\n";
     #^ '\t' means tab - to allow spacing between toe column labels
     echo "===================================================================================================="
-    ls -lht "$dirPath" | grep -v "^total" | awk '{printf "%-12s\t%-5s\t%-15s\t%-15s\t%-4s\t%-20s\t%s\n", $1, $2, $3, $4, $5, $6 " " $7 " " $8, $9}'
+    ls -lht "$dirPath" | grep -v "^total" | awk '{printf "%-12s\t%-5s\t%-15s\t%-15s\t%-4s\t%-20s\t%s\n", $1, $2, $3, $4, $5, $6 " " $7 " " $8, $9}';
     #^ Takes the result 'ls -lht "$dirPath"' and pipe the result into the grep command and then into awk command.
     #^ For 'ls', the following arguments: 'l' - provide extra details, 'h' - prints storage sizes in human-readable format, and '-t' sort rows by latest modification timestamps.
     #^ Numbers after '%-' (and before 's') means the number of characters they occupy (regardless of string being under or over that count).
     #^ For example: '%-12s' mean that string must occuppy 12 charaters.
     #^ This allows the columns to alaign with the tab seperated headings.
+
     backupLog "Listed directory - $(realpath "$dirPath")";
     #^ log command to 'backup_log.txt' with the absolute directory path instead of relative one.
 }
@@ -68,14 +81,39 @@ delete(){
     #^ Check if path exist and leads the a file.
     if confirm "Are you sure you want to delete file at path: $filePath ?"; then
         #^ Ask for user's confirmation
+        backupFile "$filePath";
+        #^ automatically back file before deletion.
         rm "$filePath";
         #^ Deletion operation.
-        echo "File deleted."
+        echo "File deleted.";
         #^ Notify user of success.
-        backupLog "Deleted file - $(realpath "$dirPath")";
+        if [ ! "$(realpath "$(dirname "$filePath")")" == "$(realpath "./backup/")" ]; then
+            #^ All in same line to save space and also because is not needed again in function afterwards.
+            #^ Comparing as absolute paths incase user uses absolute path to delete 
+            backupLog "Deleted file - $(realpath "$filePath")";
+        fi
     fi
     echo "File deletion cancelled."
     #^ Send message when user cancel file deletion
+}
+move(){
+    read -p "Please enter file path to move" -r filePath;
+    read -p "Please enter destination directory path to move to" -r dirPath;
+    if validatation "$filePath" 0 -o validate "$dirPath" 1; then return; fi
+    #^ No need to return status code as it will not be needed by caller function.
+    mv "$filePath" "$dirPath";
+    #^ The moving operation.
+}
+rename(){
+    #: Gather inputs.
+    read -p "Please enter file path to rename" -r filePath;
+    read -p "Please enter new name" -r newName;
+
+    if validatation "$(dirname "$filePath")/$newName;" 0 -o ; then return; fi
+    #^ Cannot rename a non-existing file.
+    mv -i "$filePath" "$(dirname "$filePath")/$newName";
+    #^ Use the move command ('mv') to move to exact same director but with different name.
+    #^ Not move's main purpose but works perfectly fine and is still good practice.
 }
 confirmExit(){
     #* Executes when command 'exit' is used.
@@ -101,7 +139,7 @@ confirm(){
         confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
         #^ Parsing it - convert all to uppercase then remove any whitespaces.
             if [ "$confirmation" == "Y" ]; then
-                #^ 'confirmation' inside double quotes to prevent globbing and word splitting (SC2086).
+                #^ 'confirmation' inside double quotes to prevent globbing and word splitting (SC2086 - https://www.shellcheck.net/wiki/SC2086 ).
                 echo "Confirmed success";
                 return 0;
         elif [ "$confirmation" == "N" ]; then
@@ -109,8 +147,9 @@ confirm(){
                 return 1;
             else
                 #* Users submit an unexpected input.
-                printf "Error - unexpected input./nInput must either be Y or N (your input: '%s').\nPlease try again." "$confirmation";
-                #^ apparently it is better use '%s' instead of '$confirmation'
+                printf "Error - unexpected input.\nInput must either be Y or N (your input: '%s').\nPlease try again.\n" "$confirmation";
+                #^ Apparently it is better use '%s' instead of '$confirmation'.
+                #^ Unlike 'echo', need to add new line ('\n') at end or the next output will be on same line.
             fi
     done
 }
@@ -118,7 +157,8 @@ validation(){
     #* Checks if path exist and if it leads to a file or directory.
     local path=$1;
     local isFile=$2;
-        echo "$(realpath "$path")";
+        echo "Checking path of: $(realpath "$path")";
+        #^ 'realpath' feature informs user of the absolute version of the path incase they got confused with the relative path.
         if [ -e "$path" ]; then
             #^ Does path exist?
             if [ "$isFile" -eq 0 ]; then
@@ -152,15 +192,40 @@ backupLog(){
     operation="$1"
     #^ describing what happened - command used and inputs (such as filepath).
     echo "Date: $(date +"%Y-%m-%d %H:%M:%S") | command: $operation " >> backup_log.txt
-    #^ Construct string (the log) and append it to file 'backup_log.txt'.
+    #^ Construct string (the log) and append ('>>') it to file 'backup_log.txt'.
     #^ If 'backup_log.txt' does not exist, then create it then append log to it.
     #^ File name convension is different to usual because it was specified in assaignment.
 }
 backupFile(){
-    fileName=$(basename "$1");
-    #^ More compact, yet still simple, to directly get filename from argument rather than assigning argument to a varible first.
-    #^ Far simplier, than manually finding where slice and slice the string file path thanks to 
-
+    #* No need to validate paths here because they will be already be validated by caller function.
+    filePath="$1";
+    #^ To know which file to make a back up of.
+    fileName=$(basename "$filePath - $(date +"%Y-%m-%d-%H:%M:%S")");
+    #^ More compact, yet still simple.
+    #^ Far simplier, than manually finding where slice and slice the string file path thanks to 'basename'.
+    #^ Source: https://www.tutorialspoint.com/unix_commands/basename.htm .
+    #^ Checked and it is allowed to have colons in linux file names (ext[2-4]) - https://stackoverflow.com/questions/4814040/allowed-characters-in-filename .
+    backupDir="./backup/";
+    #^ Decalred to own variable because is referanced more than once.
+    if validation "$backupDir"; then mkdir "$backupDir"; fi
+    #^ Create back up directory if does not already exist.
+    #^ Due to its simplicity, its compressed into a single line.
+    cp -i "$filePath" "$backupDir$fileName";
+    #^ 'cp' allows specifying new name whe copying file over - as mentioned in source: https://linuxize.com/post/cp-command-in-linux/ .
+    #^ '-i' is for confimation if back up was to overwite another file but near impossible that will happen because of use of timestamps in the file name.
+    totalSize=$(du -sm "backupDir" | cut -f1)
+    #^ 'du' command stands for disk usage and shows infomation regarding sizes of subjected directory.
+    #^ Argument '-s' only fetched the total size of the directory.
+    #^ Argument '-m' shows size in MB.
+    #^ Not using '-h' because value will be compared against.
+    #^ 'cut' command fetches the first column ('-f1') of the result - displaying "[size]MB" instead of "[size]MB ./backupDir". 
+    #^ 'du' command source - https://www.tutorialspoint.com/unix_commands/du.htm
+    #^ 'cut' command source - https://www.tutorialspoint.com/unix_commands/cut.htm
+    if [ "$totalSize" -gt 500 ]; then 
+        #^ '-gt' argument is same as greater than ('>').
+        echo "Warning - contents of backup directory exceeds 500 MB (currently $totalSize MB). Concider deleting some files.";
+    fi
 }
 #endregion
-menu;98
+menu;
+

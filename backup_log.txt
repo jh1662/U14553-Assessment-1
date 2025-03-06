@@ -11,3 +11,10 @@ Date: 2025-03-03 10:26:23 | command: Listed directory - /home/emperor/Resporitie
 Date: 2025-03-03 11:32:18 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
 Date: 2025-03-03 11:33:46 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
 Date: 2025-03-03 11:34:12 | command: Listed directory - /home/emperor/Resporities/AOS - ass 1/U14553-Assessment-1 
+Date: 2025-03-06 16:29:24 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1 
+Date: 2025-03-06 16:29:35 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/verververver 
+Date: 2025-03-06 16:29:43 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/fwveqvq 
+Date: 2025-03-06 16:33:13 | command: Exited program 
+Date: 2025-03-06 17:13:45 | command: Deleted file -  
+Date: 2025-03-06 17:16:16 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/dcwcw 
+Date: 2025-03-06 17:16:37 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/fwever 
