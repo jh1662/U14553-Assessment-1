@@ -1,2 +1,0 @@
-Date: 2025-03-06 17:56:38 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1 
-Date: 2025-03-06 18:32:49 | command: Renamed file 'd.txt' to file 'e.txt' 

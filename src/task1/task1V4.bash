@@ -11,6 +11,8 @@
 
 #x Developer made sure to add semi-colon at the end of all appropiate lines a stricter but better programming practice.
 
+#x Each displayed text for reading/inputing has ": " at the end as as having the user's input right next to the display text (like "Type a number hereseventy-five") will be disorientating for the user.
+
 menu(){
     clear
     #^ Makes is easier for user be clearing everyting else in the current terminal.
@@ -45,18 +47,19 @@ displayMenu(){
     echo "===================================================================================================="
     echo "Intelligent File Manager - Main Menu"
     echo "===================================================================================================="
-    echo "> list [directory path] - List all files in a directory"
-    echo "> move [file path] [directory path]- Move a file to a different folder"
-    echo "> rename [file path] [new name] - Rename a file"
-    echo "> delete [file path] - delete a file"
-    echo "> backup [file path] - manually backup a file"
+    echo "> list - List all files in a directory"
+    echo "> move - Move a file to a different folder"
+    echo "> rename - Rename a file"
+    echo "> delete - delete a file"
+    echo "> backup - manually backup a file"
     echo "> exit - exit the program"
     echo "> help - View the main menu"
     echo "===================================================================================================="
-
+    #^ Command are typed first, there are not arguments because user will be asked for inputs afterwards.
+    #^ This is so because it makes it easier for user as user only need to remember and type one thing at a time.
 }
 list(){
-    read -p "Please enter directory path" -r dirPath;
+    read -p "Please enter directory path: " -r dirPath;
     ##echo "RESULT $(! validation "$dirPath" 1)";
     if ! validation "$dirPath" 1; then return; fi
     #^ If validation fails, then exit function.
@@ -79,7 +82,7 @@ list(){
     #^ log command to 'backup_log.txt' with the absolute directory path instead of relative one.
 }
 delete(){
-    read -p "Please enter file path" -r filePath;
+    read -p "Please enter file path: " -r filePath;
     if ! validation "$filePath" 0; then return; fi
     #^ Check if path exist and leads the a file.
     if confirm "Are you sure you want to delete file at path (Y/N): $filePath ?"; then
@@ -95,14 +98,16 @@ delete(){
             #^ Comparing as absolute paths incase user uses absolute path to delete
             backupLog "Deleted file - $(realpath "$filePath")";
             #^ Counter-intuitive to backup deleted back up, when user delete back up files it is to save space.
+            return
+            #^ Better practice to use 'break' and 'return' rather then having more indentation levels.
         fi
     fi
     echo "File deletion cancelled."
     #^ Send message when user cancel file deletion
 }
 move(){
-    read -p "Please enter file path to move" -r filePath;
-    read -p "Please enter destination directory path to move to" -r dirPath;
+    read -p "Please enter file path to move: " -r filePath;
+    read -p "Please enter destination directory path to move to: " -r dirPath;
     if validation "$filePath" 0 -o validation "$dirPath" 1; then return; fi
     #^ No need to return status code as it will not be needed by caller function.
     #^ '-o' argument same as or operator ('||').
@@ -114,16 +119,22 @@ move(){
 }
 rename(){
     #: Gather inputs.
-    read -p "Please enter file path to rename" -r filePath;
-    read -p "Please enter new name" -r newName;
+    read -p "Please enter file path to rename: " -r filePath;
+    read -p "Please enter new name: " -r newName;
+    #^ File name only - not path.
 
-    if validation "$(dirname "$filePath")/$newName;" 0; then return; fi
+    if validation "$(dirname "$filePath")/$newName;" 1; then return; fi
     #^ Cannot rename a non-existing file.
     mv -i "$filePath" "$(dirname "$filePath")/$newName";
     #^ Use the move command ('mv') to move to exact same director but with different name.
     #^ Not move's main purpose but works perfectly fine and is still good practice.
     echo "File renamed";
-    backupLog "Renamed file '$filePath' to file '$newName' at $(dirname "$filePath")";
+
+    #: For logging
+    location="$(dirname "$filePath")"
+    if [ "$location" == "" ]; then location="./"; fi;
+    #^ Prevent directory path from being empty in the log entry.
+    backupLog "Renamed file '$filePath' to file '$newName' at directory $location";
     #^ Log rename operation with both old and new file names as well as the file's location.
 }
 confirmExit(){
@@ -133,6 +144,7 @@ confirmExit(){
     if confirm "Are you sure you want to exit [Y/N]"; then
         printf "Conformed exit.\nBye!";
         backupLog "Exited program";
+        #^ Logs the successful/confirmed exit command.
         exit 0;
         #^ Ends program.
     fi
@@ -146,7 +158,7 @@ confirm(){
     #* To be used for exit and deleting files
     prompt="$1";
         while true; do
-        read -p "$prompt" -r confirmation;
+        read -p "$prompt: " -r confirmation;
         confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
         #^ Parsing it - convert all to uppercase then remove any whitespaces.
             if [ "$confirmation" == "Y" ]; then
