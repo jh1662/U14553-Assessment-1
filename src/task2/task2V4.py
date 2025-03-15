@@ -6,6 +6,14 @@ import os
 
 #x This program is made to be used by a admin instead of a student thus the ability of making requests and processing next request by specified method.
 
+#x Classes was used instead of functions as it allows OOP’s modularity to make code more organised -
+#x methods grouped up into classes ‘Validation’, ‘Logging’, ‘RequestSystem’ and make it more
+#x reusable/recyclable.
+
+#x Many print statements used to satisfy Human-Computer Interaction (HCI) principle.
+
+#X Use be terminal satisfies "Keep It Simple, Stupid" (KISS) principle.
+
 class Validation:
     #* Used to store the various validation methods for different data (like name, id, etc).
     def integerLimit(self, input, limit = 999999):
@@ -41,7 +49,7 @@ class Validation:
         #* Purposefullt made it to pass request list instead of calling 'logging.getRequests' because that would require this class
         #* to have the logging instance referance passed into this class constructor which will defeat one of the main purposes of OOP
         #* which is modulality and code being reusable.
-        request =  next((request for request in requests if requests[1] == studentID and requests[2] == bookID), [])
+        request =  next((request for request in requests if request[1] == studentID and request[2] == bookID), [])
         #^ Python uses 'and' instead of '&&' for AND logical operator - https://www.w3schools.com/python/gloss_python_logical_operators.asp .
         if request == []: True
         #^ If not found then request is unique.
@@ -192,8 +200,13 @@ class RequestSystem:
             return
         if not self.validation.bookId(bookId,self.books): return
         #^ No print statement because that is done in the 'validation.bookId' method.
-        if not self.validation.uniqueRequest(studentId, bookId, self.logging.getRequests()): return
-        #^ "self.logging.getRequests()" is used as argument because its not used elseware in this function.
+        existingRequests = self.logging.getRequests()
+        if (len(existingRequests) > 0):
+            #^ No point checking other requests if they do not exist.
+            if not self.validation.uniqueRequest(studentId, bookId, existingRequests): return
+            #^ Make sure there are no requests with the same student ID and book ID - prevents duplicate/redundant resource requests.
+
+
         self.logging.appendRequest(priority, studentId, bookId)
         #^ Sucessful request is appendix to file.
 

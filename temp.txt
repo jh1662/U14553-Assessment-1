@@ -1,8 +1,12 @@
 Q:
 1 - Can student change thier priority or keep it static?
 
+2 - Does flagged means reject? Because somewhere else it said reject to the same thing.
+
 
 import re
 #^ Import non-external library to allow the use of regular expressions (regex).
 #^ Regex is extremely useful as it allows validations and modifications of strings to take a single short line instead of an enitre for-loop block of code!
 
+todo:
+> add pathlib to task 2
