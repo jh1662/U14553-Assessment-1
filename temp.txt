@@ -10,3 +10,5 @@ import re
 
 todo:
 > add pathlib to task 2
+> dane basics of task 3
+
