@@ -50,21 +50,28 @@ class Validation:
         return True
 
     def isDuplicate(filePath):
+        #* Check if file has already been uploaded.
         filename = os.path.basename(filePath)
+        #^ Get file name for comparison.
         existingSubmissions = Logging.getSubmissions()
-        if filename in existingSubmissions: return True
-        #^ If filename is found then it is a dupilcate
-        print("File with name has been found in uploaded sumbissions!")
+        if filename in existingSubmissions:
+            #* If filename is found then it is a dupilcate
+            print("File with name has been found in uploaded sumbissions!")
+            return True
         return False
 
     def validSubmission(filePath):
         if " " in os.path.basename(filePath):
+            #* Cannot upload a file with whitespaces within for code integrity purposes.
             print(f"Error - file name cannot have white-spaces. Inputted filepath - {filePath}")
         if not filePath.exists():
+            #* Cannot upload duplicates
             print(f"Error - file path does not exist. Inputted filepath - {filePath}")
             return False
+        #: Other valdiation methods.
         if not Validation.fileMetadata(filePath): return False
         if Validation.isDuplicate(filePath): return False
+
         return True
 
 class Logging:
@@ -86,7 +93,7 @@ class Logging:
     def appendLog(filename: str):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         #^ For when the action was done for the log.
-        entry += f"Sumitted file: {filename} - timestamp of submission: {timestamp}"
+        entry = f"Sumitted file: {filename} - timestamp of submission: {timestamp}"
         #^ Creating entry based on action, data/details, and current timestamp of action.
         #^ Structure - filename then submission timestamp.
         Logging.appendEntry(entry)
@@ -116,10 +123,8 @@ class Logging:
                 if line == "": return []
                 #^ If file exist but empty, then return nothing.
                 #^ Assume that user has not tampered with text file by leaving empty lines.
-                sublist = line.strip().split(" -")
-                #^ Each element is saperated, by a space whitespace and dash ("- ").
-                results.append(sublist)
-                #^ Add sub-list of elements to 2D list.
+                results.append(line)
+                #^ Add sub-list of elements to list.
         return results
 
     def uploadSubmission(path):
@@ -128,6 +133,7 @@ class Logging:
         fileName = os.path.basename(path)
         #^ Get file name for destination path.
         shutil.copy(path, os.path.join(Logging.submissionDir, fileName))
+        #^ The copy operation.
         print("File uploaded successfully")
 
 class SubmissionInterface:
@@ -159,6 +165,8 @@ class SubmissionInterface:
     def confirmExit():
         while True:
             confimation = input("Are you sure you want to exit [Y/N]").strip().upper()
+            #^ User's confimation as input.
+            #^ '.upper()' to make comparison easier.
             if confimation == "Y":
                 print("Conformed exit.\nBye!")
                 sys.exit()
@@ -170,24 +178,32 @@ class SubmissionInterface:
             #^ Deals with unexpected input.
 
     def viewAll():
-        submissions = SubmissionInterface.logging.getSubmissions()
+        submissions = Logging.getSubmissionLogs()
         if submissions == []:
+            #* No point viewing if there are no uploaded submissions.
             print("No submissions so far!")
             return
-        print("Timestamp | File name (with extention)")
+        print("All submission logs: VVV")
         for submission in submissions:
-            print (f"{submission[0]} | {submission[1]}")
+            print (submission)
+            #^ Printed without column headers because each log has labels for both file name and timestamp.
 
-    def isSubmitted(FileName: str):
-        submissions = SubmissionInterface.logging.getSubmissions()
+    def isSubmitted():
+        fileName = input("Enter file name (case sensitive)").strip()
+        submissions = Logging.getSubmissions()
         if submissions == []: return False
-        if not FileName in submissions: return False
+        if not fileName in submissions: return False
         #^ Far easier to use 'in' than a whole for-loop.
         return True
 
     def submit():
         filePath = Path(input("Enter file path here: ").strip())
-        if SubmissionInterface.validation.validSubmission(filePath): return
-        SubmissionInterface.logging.uploadSubmission(filePath)
+        if not Validation.validSubmission(filePath): return
+        #^ Called method calls other validation methods as well - fileMetadata and isDuplicate.
+        Logging.uploadSubmission(filePath)
+        #^ Does the submission operation.
+        Logging.appendLog(os.path.basename(filePath))
+        #^ Logs upload.
 
 SubmissionInterface.menu()
+#^ Starts the program.
