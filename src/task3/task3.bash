@@ -124,9 +124,8 @@ appendLog(){
 validation(){
     #* Function taken from Task 1 (not modified)
     #* Checks if path exist and if it leads to a file or directory.
-    local path=$1;
-    local isFile=$2;
-    #local isLoud=$3;
+    path=$1;
+    isFile=$2;
         echo "Checking path of: $(realpath "$path")";
         #^ 'realpath' feature informs user of the absolute version of the path incase they got confused with the relative path.
         if [ -e "$path" ]; then
