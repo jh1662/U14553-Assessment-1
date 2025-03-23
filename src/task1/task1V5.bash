@@ -42,7 +42,7 @@ menu(){
     done
 
 }
-#region Command functions
+#region Command Functions
 #: Command functions - one function per command.
 displayMenu(){
     #* Executes on start and when command 'help' is used.
@@ -62,9 +62,15 @@ displayMenu(){
     #^ Command are typed first, there are not arguments because user will be asked for inputs afterwards.
     #^ This is so because it makes it easier for user as user only need to remember and type one thing at a time.
 }
+backup(){
+    read -p "Please enter a file to back up: " -r filePath;
+    #^ User says which file to back up
+    if ! validation "$filePath" 0; then return; fi
+    #^ check if path leads to
+    backupFile "$filePath";
+}
 list(){
     read -p "Please enter directory path: " -r dirPath;
-    ##echo "RESULT $(! validation "$dirPath" 1)";
     if ! validation "$dirPath" 1; then return; fi
     #^ If validation fails, then exit function.
     #^ Does not work with square brackets ('[' and ']').
@@ -156,8 +162,8 @@ confirmExit(){
     #^ display message when user does not want to exit.
 }
 #endregion
-#region Common functions
-#: Common functions - functions used by one or more command functions.
+#region Utility functions
+#: Utility functions - functions used by one or more command functions.
 confirm(){
     #* To be used for exit and deleting files
     prompt="$1";
