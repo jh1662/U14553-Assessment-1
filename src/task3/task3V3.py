@@ -5,7 +5,7 @@ import os
 #^ Import non-external library to allow the use opening, editing and creating text files for logs.
 from pathlib import Path
 #^ Allow paths work cross-platform - able to use on both Windows and Linux.
-#^ Also allows in-built feature such as '.exists()'
+#^ Also allows in-built features such as '.exists()'
 import sys
 #^ 'sys.exit()' allows for better termination of Python program than other alternatives like 'quit()'
 import shutil
@@ -187,11 +187,11 @@ class Validation:
         #: Other valdiation methods.
         if not Validation.fileMetadata(filePath): return False
         if Validation.isDuplicate(filePath): return False
-
+        if not Validation.hasNoPlagiarism(filePath): return False
         return True
 
     def hasNoPlagiarism(filePath):
-        #* Caller mathod, because it relates to file validation.
+        #* Caller mathod, because it relates to file validation and 'Validation' having the needed field.
         return not PlagiarismChecker.PlagiarismCheck(filePath, Logging.submissionDir)
         #^ If is plagiarised then catches true resulting in returning false.
         #^ If is not plagiarised then catches false resulting in returning true.

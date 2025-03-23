@@ -21,7 +21,7 @@ menu(){
     displayMenu;
     #^ Display commands.
     while true; do
-        read -p "Please enter a command ('help' for commands):" -r option;
+        read -p "Please enter a command ('help' for commands): " -r option;
         #^ "-r" argument prevents backslashes ('\') from being interpreted as special characters such as new line ('\n') (SC2162 - https://www.shellcheck.net/wiki/SC2162).
         #^ "-p" argument displays text to terminal before waiting for user input - like 'echo' before but on the same line/
         option=$(echo "$option" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
@@ -37,7 +37,7 @@ menu(){
             "BACKUP") backup ;;
             "EXIT") confirmExit ;;
             "HELP") displayMenu ;;
-            *) printf "Error - unknown command try again.\nType 'help' to view all script commands." ;;
+            *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
             #^ 'printf' allows formatting of special characters such as '\n' to new line character.
         esac
     done
@@ -69,10 +69,12 @@ backup(){
     if ! validation "$filePath" 0; then return; fi
     #^ check if path leads to
     backupFile "$filePath";
+    #^ Does the backup operation
+    backupLog "Manually backup file - $(realpath "$filePath")";
 }
 list(){
     read -p "Please enter directory path: " -r dirPath;
-    if ! validation "$dirPath" 1; then return; fi
+    if ! validation "$dirPath" 0; then return; fi
     #^ If validation fails, then exit function.
     #^ Does not work with square brackets ('[' and ']').
 
@@ -134,12 +136,12 @@ rename(){
     read -p "Please enter new name: " -r newName;
     #^ File name only - not path.
 
-    if ! validation "$filePath" 1; then return; fi
+    if ! validation "$filePath" 0; then return; fi
     #^ Cannot rename a non-existing file.
     mv -i "$filePath" "$(dirname "$filePath")/$newName";
     #^ Use the move command ('mv') to move to exact same director but with different name.
     #^ Not move's main purpose but works perfectly fine and is still good practice.
-    echo "File renamed";
+    echo "File renamed.";
 
     #: For logging
     location="$(dirname "$filePath")"
@@ -219,7 +221,7 @@ validation(){
                 fi
             fi
         else
-            printf "Error - non-existant path - the path '%s' leads to a file instead of a directory\n" "$path";
+            printf "Error - non-existant path - %s\n" "$path";
         return 1;
         fi
 }
@@ -239,16 +241,17 @@ backupFile(){
     #* No need to validate paths here because they will be already be validated by caller function.
     filePath="$1";
     #^ To know which file to make a back up of.
-    fileName=$(basename "$filePath - $(date +"%Y-%m-%d-%H-%M-%S")");
+    fileName="$(basename "${filePath%.*}")-$(date +"%Y-%m-%d-%H-%M-%S").${filePath##*.}"
     #^ More compact, yet still simple.
     #^ Far simplier, than manually finding where slice and slice the string file path thanks to 'basename'.
     #^ Source: https://www.tutorialspoint.com/unix_commands/basename.htm .
     #^ Checked and it is allowed to have colons in linux file names (ext[2-4]) - https://stackoverflow.com/questions/4814040/allowed-characters-in-filename .
     backupDir="./backup/";
     #^ Decalred to own variable because is referanced more than once.
-    if ! validation "$backupDir"; then mkdir "$backupDir"; fi
+    if ! validation "$backupDir" 1 > /dev/null; then mkdir "$backupDir"; fi
     #^ Create back up directory if does not already exist.
     #^ Due to its simplicity, its compressed into a single line.
+    #^ '/dev/null' - disregards any outputs except exit codes - as mentioned in source: https://www.digitalocean.com/community/tutorials/dev-null-in-linux .
     cp -i "$filePath" "$backupDir$fileName";
     #^ 'cp' allows specifying new name whe copying file over - as mentioned in source: https://linuxize.com/post/cp-command-in-linux/ .
     #^ '-i' is for confimation if back up was to overwite another file but near impossible that will happen because of use of timestamps in the file name.

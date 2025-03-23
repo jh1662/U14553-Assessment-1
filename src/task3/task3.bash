@@ -20,7 +20,7 @@ menu(){
     #^ Friendly greeting to the user.
     displayMenu;
     while true; do
-        read -p "Please enter a command ('help' for commands):" -r option;
+        read -p "Please enter a command ('help' for commands): " -r option;
         case $option in
             "submit") submit ;;
             "logs") logs ;;
@@ -57,6 +57,12 @@ logs(){
 check(){
     #* Allow the user to verify if a file has been submitted.
     read -p "Please enter file name (case sensitive): " -r fileName;
+    if echo "$fileName" | grep -q " "; then
+        #^ 'grep' command source - https://www.tutorialspoint.com/unix_commands/grep.htm
+        #* Check for white-spaces in the file name.
+        printf "Error - file name cannot have white-spaces. Inputted filepath - %s\n" "$filePath";
+        return 1;
+    fi;
     if [ -d "$submissionDir" ]; then
         if [ -f "$submissionDir/$fileName" ]; then
             echo "File '$fileName' exists in submissions.";
@@ -133,7 +139,7 @@ validation(){
                 else
                     printf "Error - path '%s' does not lead to a file (to a directory intead)\n" "$path";
                     return 1;
-                    #^ In bash, 'return 1' means returning true.
+                    #^ In bash, 'return 1' means returning false.
                 fi
             else
                 if [ -d "$path" ]; then
@@ -159,8 +165,8 @@ validateMetadata(){
     #^ Extracts just the file name.
     #^ 'basename' command source - https://www.tutorialspoint.com/unix_commands/basename.htm
     if echo "$baseName" | grep -q " "; then
-        #* Check for white-spaces in the file name.
         #^ 'grep' command source - https://www.tutorialspoint.com/unix_commands/grep.htm
+        #* Check for white-spaces in the file name.
         printf "Error - file name cannot have white-spaces. Inputted filepath - %s\n" "$filePath";
         return 1;
     fi;

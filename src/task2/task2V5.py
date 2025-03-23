@@ -53,10 +53,10 @@ class Validation:
         #* which is modulality and code being reusable.
         request =  next((request for request in requests if request[1] == studentID and request[2] == bookID), [])
         #^ Python uses 'and' instead of '&&' for AND logical operator - https://www.w3schools.com/python/gloss_python_logical_operators.asp .
-        if request == []: True
+        if request == []: return True
         #^ If not found then request is unique.
         #: Not unique.
-        print(f"Invalid request - student {studentID} has already requested for book {bookID}.")
+        print(f"Invalid request - student {request[1]} has already requested for book {bookID}.")
         return False
 
 class Logging:
@@ -142,7 +142,6 @@ class Logging:
         #^ Append entry to file.
         #^ New line to indicate new entry.
 
-
 class RequestSystem:
     #* Is main class, hence other classes are aggregate classes (stoered inside this class).
     books = [
@@ -166,7 +165,7 @@ class RequestSystem:
         #^ The 'self' argument is a referance to the class instance to allow modifying/reading fields and call other methods.
         #^ The 'self' argument in only needed in the method definition and not in its call.
         #^ Source - https://www.w3schools.com/python/gloss_python_self.asp .
-        options = "\nEnter one of the following numbers for the corrosponding option:\n1 - View all books.\n2 - Request book.\n3 - View all requests.\n4 - Process next request.\n4 - Exit program.\n: "
+        options = "\nEnter one of the following numbers for the corrosponding option:\n1 - View all books.\n2 - Request book.\n3 - View all requests.\n4 - Process next request.\n5 - Exit program.\n: "
         #^ Just like Bash, '\n' means new line.
         #^ ": " indicates for user input.
         #^ Empty line at top to help saperate from console messages of past commands/options.
@@ -192,7 +191,7 @@ class RequestSystem:
         priority = input("Enter priority (1-10). 1 is lowest priority and 10 is highest: ").strip()
         #^ For priority scheduling.
         bookId = input("Enter book ID: ").strip()
-        #^ Much easier for both user and program to find book
+        #^ Much easier for both user and program to find book.
         #: validation
         if not self.validation.integerLimit(studentId):
             print (f"Invalid student ID '{studentId}' - must be an integer between the range of 0 to 999,999")
@@ -266,12 +265,12 @@ class RequestSystem:
             #* Prioritieses requests higher priority values
             for index in range(len(requests)):
                 #* Gets the first request where the requested book is availible.
-                print(requests[index][0])
                 if requests[index][0] != str(priority): continue
                 #^ Cannot lend book to student request with unequality to current priority value.
                 #^ Converting to int instead may cause unexpected errors such as manually editing book_requests.txt to change number to something else which would cause error from int parse
                 #^ meanwhile 'str' will work for whatever number.
-                if not self.processBook(index): continue
+                if not self.processBook(int(requests[index][2])): continue
+                #^ Cannot lend book to student when book as already borrowed by somebody else.
                 processedRequest = self.logging.dequeueRequest(index).split(", ")
                 self.logging.appendLog(False,processedRequest[0],processedRequest[1],processedRequest[2],processedRequest[3])
                 return "Processed request - Priority value (1-10), Student ID, Book ID: " + ", ".join(processedRequest)
@@ -291,10 +290,10 @@ class RequestSystem:
         if self.books[index][3] == False: return False
         #^ Cannot process request if book is currently unavailable.
         #: Book unavailable so can process request.
-        self.books[index][3] == False
+        self.books[index][3] = False
         return True
 
-    def confirmExit():
+    def confirmExit(self):
         while True:
             confimation = input("Are you sure you want to exit [Y/N]").strip().upper()
             if confimation == "Y":
