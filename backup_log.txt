@@ -1,0 +1,17 @@
+Date: 2025-03-23 19:29:04 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/src 
+Date: 2025-03-23 19:35:10 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/src 
+Date: 2025-03-23 19:35:19 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1 
+Date: 2025-03-23 19:35:33 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/src 
+Date: 2025-03-23 19:36:46 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/src/task1 
+Date: 2025-03-23 19:39:32 | command: Exited program 
+Date: 2025-03-23 19:45:31 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1 
+Date: 2025-03-23 19:48:00 | command: Moved file './text.pdf' to directory /home/emperor/Resporities/AOS/U14553-Assessment-1/src/task1 
+Date: 2025-03-23 19:48:35 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1 
+Date: 2025-03-23 19:49:25 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1/src/task1 
+Date: 2025-03-23 19:51:31 | command: Exited program 
+Date: 2025-03-23 19:52:13 | command: Exited program 
+Date: 2025-03-23 19:59:08 | command: Renamed file 'test.pdf' to file 'fun.pdf' at directory . 
+Date: 2025-03-23 20:01:18 | command: Renamed file 'test.pdf' to file 'fun.pdf' at directory . 
+Date: 2025-03-23 20:02:33 | command: Listed directory - /home/emperor/Resporities/AOS/U14553-Assessment-1 
+Date: 2025-03-23 20:05:15 | command: Renamed file 'fun.pdf' to file 'test.pdf' at directory . 
+Date: 2025-03-23 20:06:28 | command: Renamed file 'test.pdf' to file 'fun.pdf' at directory . 

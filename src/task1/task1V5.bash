@@ -24,18 +24,19 @@ menu(){
         read -p "Please enter a command ('help' for commands):" -r option;
         #^ "-r" argument prevents backslashes ('\') from being interpreted as special characters such as new line ('\n') (SC2162 - https://www.shellcheck.net/wiki/SC2162).
         #^ "-p" argument displays text to terminal before waiting for user input - like 'echo' before but on the same line/
+        option=$(echo "$option" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
         case $option in
             #* Unlike most basic Bash shell commands, operations are called only by command name and then ask
             #* to input file paths instead of command and arguments together. This done for sake of user’s clarity.
             #* Clarity lowers learning curve meaning less, or no time, required to learn than trying to comprehend the
             #* structure of a command and its arguments for an operation.
-            "list") list ;;
-            "move") move ;;
-            "rename") rename ;;
-            "delete") delete ;;
-            "backup") backup ;;
-            "exit") confirmExit ;;
-            "help") displayMenu ;;
+            "LIST") list ;;
+            "MOVE") move ;;
+            "RENAME") rename ;;
+            "DELETE") delete ;;
+            "BACKUP") backup ;;
+            "EXIT") confirmExit ;;
+            "HELP") displayMenu ;;
             *) printf "Error - unknown command try again.\nType 'help' to view all script commands." ;;
             #^ 'printf' allows formatting of special characters such as '\n' to new line character.
         esac
@@ -133,7 +134,7 @@ rename(){
     read -p "Please enter new name: " -r newName;
     #^ File name only - not path.
 
-    if validation "$(dirname "$filePath")/$newName;" 1; then return; fi
+    if ! validation "$filePath" 1; then return; fi
     #^ Cannot rename a non-existing file.
     mv -i "$filePath" "$(dirname "$filePath")/$newName";
     #^ Use the move command ('mv') to move to exact same director but with different name.
@@ -152,7 +153,7 @@ confirmExit(){
     #* Confirm if user wated to exit or not, if no yes ('Y') or no ('N'), state it and then ask again.
     #* Function purposely not called 'exit' to not call the bash in-built function instead.
     if confirm "Are you sure you want to exit [Y/N]"; then
-        printf "Conformed exit.\nBye!";
+        printf "Conformed exit.\nBye!\n";
         backupLog "Exited program";
         #^ Logs the successful/confirmed exit command.
         exit 0;
