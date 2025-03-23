@@ -14,6 +14,7 @@ submissionDir="./submissions";
 #x Due to the sheer amount of functions, nested regions are used to keep code organised.
 
 menu(){
+    #* Taken from Task 1 and modified to fit needs.
     clear;
     #^ Clear the terminal to start with a fresh interface.
     echo "Hi!";
@@ -21,13 +22,14 @@ menu(){
     displayMenu;
     while true; do
         read -p "Please enter a command ('help' for commands): " -r option;
+        option=$(echo "$option" | tr '[:lower:]' '[:upper:]');
         case $option in
             "submit") submit ;;
             "logs") logs ;;
-            "check") check ;;
+            "sheck") check ;;
             "exit") confirmExit ;;
             "help") displayMenu ;;
-            *) printf "Error - unknown command try again.\nType 'help' to view all script commands." ;;
+            *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
         esac;
     done;
 }
@@ -243,7 +245,7 @@ confirm(){
     prompt="$1";
         while true; do
         read -p "$prompt: " -r confirmation;
-        confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
+        confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]');
         #^ Parsing it - convert all to uppercase then remove any whitespaces.
             if [ "$confirmation" == "Y" ]; then
                 #^ 'confirmation' inside double quotes to prevent globbing and word splitting (SC2086 - https://www.shellcheck.net/wiki/SC2086 ).

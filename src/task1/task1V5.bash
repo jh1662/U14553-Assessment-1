@@ -24,19 +24,19 @@ menu(){
         read -p "Please enter a command ('help' for commands): " -r option;
         #^ "-r" argument prevents backslashes ('\') from being interpreted as special characters such as new line ('\n') (SC2162 - https://www.shellcheck.net/wiki/SC2162).
         #^ "-p" argument displays text to terminal before waiting for user input - like 'echo' before but on the same line/
-        option=$(echo "$option" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
+        option=$(echo "$option" | tr '[:lower:]' '[:upper:]');
         case $option in
             #* Unlike most basic Bash shell commands, operations are called only by command name and then ask
             #* to input file paths instead of command and arguments together. This done for sake of user’s clarity.
             #* Clarity lowers learning curve meaning less, or no time, required to learn than trying to comprehend the
             #* structure of a command and its arguments for an operation.
-            "LIST") list ;;
-            "MOVE") move ;;
-            "RENAME") rename ;;
-            "DELETE") delete ;;
-            "BACKUP") backup ;;
-            "EXIT") confirmExit ;;
-            "HELP") displayMenu ;;
+            "list") list ;;
+            "move") move ;;
+            "rename") rename ;;
+            "delete") delete ;;
+            "backup") backup ;;
+            "exit") confirmExit ;;
+            "help") displayMenu ;;
             *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
             #^ 'printf' allows formatting of special characters such as '\n' to new line character.
         esac
@@ -172,7 +172,7 @@ confirm(){
     prompt="$1";
         while true; do
         read -p "$prompt: " -r confirmation;
-        confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]');
+        confirmation=$(echo "$confirmation" | tr '[:lower:]' '[:upper:]');
         #^ Parsing it - convert all to uppercase then remove any whitespaces.
             if [ "$confirmation" == "Y" ]; then
                 #^ 'confirmation' inside double quotes to prevent globbing and word splitting (SC2086 - https://www.shellcheck.net/wiki/SC2086 ).
