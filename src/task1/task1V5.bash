@@ -24,19 +24,19 @@ menu(){
         read -p "Please enter a command ('help' for commands): " -r option;
         #^ "-r" argument prevents backslashes ('\') from being interpreted as special characters such as new line ('\n') (SC2162 - https://www.shellcheck.net/wiki/SC2162).
         #^ "-p" argument displays text to terminal before waiting for user input - like 'echo' before but on the same line/
-        option=$(echo "$option" | tr '[:lower:]' '[:upper:]');
+        ## option=$(echo "$option" | tr '[:lower:]' '[:upper:]'); #< messes up input
         case $option in
             #* Unlike most basic Bash shell commands, operations are called only by command name and then ask
             #* to input file paths instead of command and arguments together. This done for sake of user’s clarity.
             #* Clarity lowers learning curve meaning less, or no time, required to learn than trying to comprehend the
             #* structure of a command and its arguments for an operation.
-            "LIST") list ;;
-            "MOVE") move ;;
-            "RENAME") rename ;;
-            "DELETE") delete ;;
-            "BACKUP") backup ;;
-            "EXIT") confirmExit ;;
-            "HELP") displayMenu ;;
+            "list") list ;;
+            "move") move ;;
+            "rename") rename ;;
+            "delete") delete ;;
+            "backup") backup ;;
+            "exit") confirmExit ;;
+            "help") displayMenu ;;
             *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
             #^ 'printf' allows formatting of special characters such as '\n' to new line character.
         esac
@@ -121,7 +121,7 @@ delete(){
 move(){
     read -p "Please enter file path to move: " -r filePath;
     read -p "Please enter destination directory path to move to: " -r dirPath;
-    if validation "$filePath" 0 -o validation "$dirPath" 1; then return; fi
+    if ! validation "$filePath" 0 -o ! validation "$dirPath" 1; then return; fi
     #^ No need to return status code as it will not be needed by caller function.
     #^ '-o' argument same as or operator ('||').
     mv "$filePath" "$dirPath/$(basename "$filePath")";

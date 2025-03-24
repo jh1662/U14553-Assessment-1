@@ -22,13 +22,13 @@ menu(){
     displayMenu;
     while true; do
         read -p "Please enter a command ('help' for commands): " -r option;
-        option=$(echo "$option" | tr '[:lower:]' '[:upper:]');
+        ## option=$(echo "$option" | tr '[:lower:]' '[:upper:]'); #< messes up input
         case $option in
-            "SUBMIT") submit ;;
-            "LOGS") logs ;;
-            "CHECK") check ;;
-            "EXIT") confirmExit ;;
-            "HELP") displayMenu ;;
+            "submit") submit ;;
+            "logs") logs ;;
+            "check") check ;;
+            "exit") confirmExit ;;
+            "help") displayMenu ;;
             *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
         esac;
     done;
