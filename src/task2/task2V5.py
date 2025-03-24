@@ -208,7 +208,7 @@ class RequestSystem:
             if not self.validation.uniqueRequest(studentId, bookId, existingRequests): return
             #^ Make sure there are no requests with the same student ID and book ID - prevents duplicate/redundant resource requests.
 
-
+        print("Request made.")
         self.logging.appendRequest(priority, studentId, bookId)
         #^ Sucessful request is appendix to file.
 
