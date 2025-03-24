@@ -6,8 +6,6 @@ validExtensions=(.pdf .docx);
 #^ Allowed file extensions for assignment submissions.
 sizeLimit=$((50 * 1024 * 1024));
 #^ Maximum file size allowed is 50 MB.
-submissionLog="./submission_log.txt";
-#^ Log file for assignment submissions.
 submissionDir="./submissions";
 #^ Directory where submitted assignment files are stored.
 
