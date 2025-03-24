@@ -74,7 +74,7 @@ backup(){
 }
 list(){
     read -p "Please enter directory path: " -r dirPath;
-    if ! validation "$dirPath" 0; then return; fi
+    if ! validation "$dirPath" 1; then return; fi
     #^ If validation fails, then exit function.
     #^ Does not work with square brackets ('[' and ']').
 
