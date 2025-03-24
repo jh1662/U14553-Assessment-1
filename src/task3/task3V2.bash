@@ -24,11 +24,11 @@ menu(){
         read -p "Please enter a command ('help' for commands): " -r option;
         option=$(echo "$option" | tr '[:lower:]' '[:upper:]');
         case $option in
-            "submit") submit ;;
-            "logs") logs ;;
-            "sheck") check ;;
-            "exit") confirmExit ;;
-            "help") displayMenu ;;
+            "SUBMIT") submit ;;
+            "LOGS") logs ;;
+            "CHECK") check ;;
+            "EXIT") confirmExit ;;
+            "HELP") displayMenu ;;
             *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
         esac;
     done;

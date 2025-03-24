@@ -30,13 +30,13 @@ menu(){
             #* to input file paths instead of command and arguments together. This done for sake of user’s clarity.
             #* Clarity lowers learning curve meaning less, or no time, required to learn than trying to comprehend the
             #* structure of a command and its arguments for an operation.
-            "list") list ;;
-            "move") move ;;
-            "rename") rename ;;
-            "delete") delete ;;
-            "backup") backup ;;
-            "exit") confirmExit ;;
-            "help") displayMenu ;;
+            "LIST") list ;;
+            "MOVE") move ;;
+            "RENAME") rename ;;
+            "DELETE") delete ;;
+            "BACKUP") backup ;;
+            "EXIT") confirmExit ;;
+            "HELP") displayMenu ;;
             *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
             #^ 'printf' allows formatting of special characters such as '\n' to new line character.
         esac
@@ -124,7 +124,7 @@ move(){
     if validation "$filePath" 0 -o validation "$dirPath" 1; then return; fi
     #^ No need to return status code as it will not be needed by caller function.
     #^ '-o' argument same as or operator ('||').
-    mv "$filePath" "$dirPath";
+    mv "$filePath" "$dirPath/$(basename "$filePath")";
     #^ The moving operation.
     echo "File moved";
     backupLog "Moved file '$filePath' to directory $(realpath "$dirPath")";
