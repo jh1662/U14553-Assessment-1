@@ -126,7 +126,7 @@ move(){
     #^ '-o' argument same as or operator ('||').
     mv "$filePath" "$dirPath/$(basename "$filePath")";
     #^ The moving operation.
-    echo "File moved";
+    echo "File moved.";
     backupLog "Moved file '$filePath' to directory $(realpath "$dirPath")";
     #^ Log moving operation with file name and destination directory.
 }
