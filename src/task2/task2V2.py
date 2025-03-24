@@ -64,7 +64,7 @@ class Logging():
                 results.append(sublist)
                 #^ Add sub-list of elements to 2D list.
         return results
-        #^ Returns queue as 2D list that to serve either Priority Scheduling, FIFO or just to view all requests. 
+        #^ Returns queue as 2D list that to serve either Priority Scheduling, FIFO or just to view all requests.
         #^ Returns all requests for FIFO instead of the first one because can only borrow books that are currently availible - not always the first is processed.
 
     def appendRequest(self, priority, studentId, bookId):
@@ -77,22 +77,22 @@ class Logging():
         #* return popped/dequeued entry as list, otherwise return 'False' if not possible.
         #* Note that request ID/index start from 0.
         #* Is somewhat validated before but filed can be edited/deleted before actual file writing/reading operations.
-        if not os.path.exists(self.pathRequests): 
+        if not os.path.exists(self.pathRequests):
             #* Cannot requeue a queue that does not exist (not existing means a request has not been made yet).
             print("Error - book_requests.txt does not exist. Make a request to create file.")
             return False
         with open(self.pathRequests, "r") as file: entires = file.readlines()
         #^ Store text file content as 1D list as only index is needed.
         #: More validation
-        if entires == []: 
+        if entires == []:
             #* Cannot requeue a queue that is currently empty.
             print ("Error - No requests has been made yet. Please make atleast one to process them")
             return False
-        if len(entires) <= index: 
+        if len(entires) <= index:
             #* Index out-of-bounds
             print ("Error - request ID/index is out of current bounds, view requests to double check.")
             return False
-        
+
         dequeuedEntry = entires.pop(index)
         #^ Remove entry and store to variable.
         with open(self.pathRequests, "w") as file: file.writelines(entires)
