@@ -13,6 +13,10 @@ submissionDir="./submissions";
 
 #x Due to the sheer amount of functions, nested regions are used to keep code organised.
 
+#x Some functions taken from Task 1 so refer there for even more code description and justifications.
+
+#x Code here has imporvements over task 1.
+
 menu(){
     #* Taken from Task 1 and modified to fit needs.
     clear;
@@ -30,6 +34,7 @@ menu(){
             "exit") confirmExit ;;
             "help") displayMenu ;;
             *) printf "Error - unknown command '%s', try again.\nType 'help' to view all script commands.\n" "$option";;
+            #^ Deals with invalid options
         esac;
     done;
 }
@@ -40,14 +45,19 @@ menu(){
 submit(){
     #* Manage the overall submission process.
     read -p "Please enter file path: " -r filePath;
-    validSubmission "$filePath"; if [ $? -ne 0 ]; then return; fi;
+    if ! validSubmission "$filePath"; then return; fi
+    #^ Make sure filepath and file is valid before submitting it.
     uploadSubmission "$filePath";
+    #^ Submitting operation
     appendLog "$(basename "$filePath")";
+    #^ Log submission
 }
 logs(){
     #* Display all assignment submission logs.
     logsContent="$(getSubmissionLogs)";
     if [ -z "$logsContent" ]; then
+        #^ Improved code over task 1 - "-z" argument checks if subjected string in empty.
+        #^ Source - https://www.tutorialspoint.com/unix/unix-basic-operators.htm .
         echo "No submissions so far!";
         return;
     fi;
@@ -65,13 +75,19 @@ check(){
         printf "Error - file name cannot have white-spaces. Inputted filepath - %s\n" "$filePath";
         return 1;
     fi;
-    if [ -d "$submissionDir" ]; then
-        if [ -f "$submissionDir/$fileName" ]; then
-            echo "File '$fileName' exists in submissions.";
-            return 0;
-        fi;
+    if ! validation "$submissionDir" 1; then
+        #* If submission directive does not exist then assume that there are no submissions - as the folder wasn't generated yet.
+        echo "File '$fileName' has not been submitted.";
+        return 1;
+    fi;
+    if ! checkDuplicate "$submissionDir/$fileName"; then
+        #^ check if file exists
+        echo "File '$fileName' exists in submissions.";
+        #^ File does exist in submissions.
+        return 0;
     fi;
     echo "File '$fileName' has not been submitted.";
+    #^ File does not exist in submissions.
     return 1;
 }
 confirmExit(){
@@ -107,6 +123,8 @@ getSubmissionLogs(){
     #* Retrieve and display assignment submission logs.
     if [ -f "$submissionLog" ]; then
         cat "$submissionLog";
+        #^ Improved way of displaying - using 'cat'.
+        #^ Source - https://www.tutorialspoint.com/writing-text-to-file-using-linux-cat-command .
     else
         echo "";
     fi;
@@ -115,7 +133,7 @@ appendLog(){
     #* Log the file submission with a timestamp.
     filename=$1;
     timestamp=$(date "+%Y-%m-%d %H:%M:%S");
-    #^ 'date' command source - https://www.tutorialspoint.com/unix_commands/date.htm
+    #^ 'date' command source - https://www.tutorialspoint.com/unix_commands/date.htm .
     entry="Submitted file: ${filename} - timestamp of submission: ${timestamp}";
     echo "$entry" >> "$submissionLog";
 }
@@ -124,6 +142,7 @@ appendLog(){
 validation(){
     #* Function taken from Task 1 (not modified)
     #* Checks if path exist and if it leads to a file or directory.
+    #* Keep in mind, in bash, 1 means false and 0 means true!
     path=$1;
     isFile=$2;
         echo "Checking path of: $(realpath "$path")";
@@ -157,6 +176,7 @@ validation(){
         return 1;
         fi
 }
+
 validateMetadata(){
     #* Validate the submission file's name and properties.
     #* Checks for: white-spaces, presence of a dot in the filename, valid extension, file existence, and file size.
@@ -211,9 +231,11 @@ validateMetadata(){
 }
 checkDuplicate(){
     #*Prevent duplicate submissions by checking if a file with the same name already exists.
+    #* If unique, return 0 as success otherwise return 1 as failure.
     filePath=$1;
     baseName=$(basename "$filePath");
-    if [ -d "$submissionDir" ]; then
+    if validation "$submissionDir" 1; then
+    #^ Cannot check file if file's directory does not exist.
         if [ -f "$submissionDir/$baseName" ]; then
             printf "File with name has been found in uploaded submissions!\n";
             return 1;
@@ -224,8 +246,8 @@ checkDuplicate(){
 validSubmission(){
     #* Run all validations on the file for submission.
     filePath=$1;
-    validateMetadata "$filePath"; if [ $? -ne 0 ]; then return 1; fi;
-    checkDuplicate "$filePath"; if [ $? -ne 0 ]; then return 1; fi;
+    if ! validateMetadata "$filePath"; then return 1; fi
+    if ! checkDuplicate "$filePath"; then return 1; fi
     return 0;
 }
 #endregion
