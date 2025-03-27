@@ -235,7 +235,7 @@ class Logging:
     def getSubmissionLogs():
         #* Uses submission_log.txt because timestamps (of submissions) are required.
         results = []
-        if not os.path.exists(Logging.logFile): results
+        if not os.path.exists(Logging.logFile): return results
         #^ If file cannot be found, assume no submissions have been made.
         with open(Logging.logFile, "r") as file:
             #^ 'r' argument means read mode.
