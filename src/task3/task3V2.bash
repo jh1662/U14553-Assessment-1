@@ -234,7 +234,7 @@ checkDuplicate(){
     #* If unique, return 0 as success otherwise return 1 as failure.
     filePath=$1;
     baseName=$(basename "$filePath");
-    if validation "$submissionDir" 1; then
+    if validation "$submissionDir" 1 > /dev/null; then
     #^ Cannot check file if file's directory does not exist.
         if [ -f "$submissionDir/$baseName" ]; then
             printf "File with name has been found in uploaded submissions!\n";

@@ -50,6 +50,7 @@ class PlagiarismChecker:
             #* Using complex file type with too much viarity make is very possible for unexpected errors -  hence the try statement
             with open(filePath, "rb") as file:
                 #^ Due to the complexity of the PDF file, program has to read the binary itself.
+                #^ 'rb' source - https://www.w3schools.com/python/python_file_handling.asp .
                 content = file.read().decode("latin1", errors="ignore")
                 #^ Decodes using 'latin1' encryption.
                 texts = re.findall(r'\((.*?)\)', content)
@@ -95,10 +96,8 @@ class PlagiarismChecker:
         ext = os.path.splitext(filepath)[1]
         #^ Can use '.splitext' on os.path instances -  https://docs.python.org/3/library/os.path.html#os.path.splitext .
         #^ '[1]' fetches the file extention.
-        if ext == ".pdf":
-            return PlagiarismChecker.textExtractionPDF(filepath)
-        elif ext == ".docx":
-            return PlagiarismChecker.textExtractionMSWord(filepath)
+        if ext == ".pdf": return PlagiarismChecker.textExtractionPDF(filepath)
+        elif ext == ".docx": return PlagiarismChecker.textExtractionMSWord(filepath)
         else:
             print("Error - invalid file in uploaded submission folder: " + filepath)
             return None
@@ -112,7 +111,7 @@ class PlagiarismChecker:
 
         #: Cannot check plagiarism is there is no file to compare with.
         if not os.path.isdir(Logging.submissionDir):
-            print("Error - no uploaded files to compare with for plagiarism check. Please upload atleast one file to check plagiarism")
+            print("Error - no uploaded files to compare with for plagiarism check. Please upload atleast one file to check plagiarism.")
             return None
 
         targetFileText = PlagiarismChecker.extracText(filePath)
@@ -313,10 +312,14 @@ class SubmissionInterface:
     def isSubmitted():
         fileName = input("Enter file name (case sensitive)").strip()
         submissions = Logging.getSubmissions()
-        if submissions == []: return False
-        if not fileName in submissions: return False
+        if submissions == []:
+            print("No files have been uploaded yet, therefore file is unique.")
+            return
+        if not fileName in submissions:
+            print("File not found in submissions - is unique.")
+            return
         #^ Far easier to use 'in' than a whole for-loop.
-        return True
+        print("File found in submissions - is not unique (has duplicate)")
 
     def submit():
         filePath = Path(input("Enter file path here: ").strip())
